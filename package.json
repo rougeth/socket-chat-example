@@ -1,0 +1,8 @@
+{
+  "name": "socket-chat-example",
+  "version": "0.0.1",
+  "description": "an example of websockets using socket.io",
+  "dependencies": {
+    "express": "^4.4.3"
+  }
+}
