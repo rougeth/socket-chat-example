@@ -33,9 +33,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8">
+                    <h2>Messages</h2>
                     <ul id="messages"></ul>
                 </div>
                 <div class="col-md-4">
+                    <h2>Users connected</h2>
+                    <ul id="users">
+                    </ul>
+
+                    <h2>New message</h2>
                     <form role="form">
                         <div class="form-group">
                             <label for="new-message" placeholder="New message">New message</label>
@@ -51,15 +57,30 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
-        var socket = io();
-        $('form').submit(function() {
-            socket.emit('new message', $('#new-message').val());
-            $('#new-message').val('');
-            return false;
-        });
-        socket.on('new message', function(msg) {
-            $('#messages').append($('<li>').text(msg));
-        });
+            var socket = io();
+
+            var username;
+            do {
+                username = prompt('Please enter your username');
+            } while(username == '');
+
+            $('#users').append($('<li>').text(username));
+
+
+            socket.emit('set-username', username);
+            socket.on('chat-message', function(msg) {
+                $('#messages').append($('<li>').text(msg.message));
+            });
+            socket.on('chat-new-user', function(msg) {
+                $('#messages').append($('<li>').text(msg));
+            });
+            $('form').submit(function(){
+                var msg = $('#new-message').val();
+                socket.emit('chat-message', msg);
+                $('#new-message').val('');
+                return false;
+            });
     </script>
+
 </body>
 </html>
