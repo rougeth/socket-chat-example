@@ -68,7 +68,7 @@ io.on('connection', function(socket) {
         io.sockets.emit('chat-message', users[socket.id], msg);
     });
 
-    socket.on('disconnected', function() {
+    socket.on('disconnect', function() {
         io.sockets.emit('status', users[socket.io] + ' has left the server.');
         delete users[socket.id];
         io.sockets.emit('users', users);
