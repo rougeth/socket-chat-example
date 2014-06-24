@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Socket Chat Example</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <style>
@@ -34,17 +36,19 @@
             <div class="row">
                 <div class="col-md-8">
                     <h2>Messages</h2>
-                    <ul id="messages"></ul>
+                    <ul id="messages" class="list-unstyled">
+                    </ul>
                 </div>
                 <div class="col-md-4">
-                    <h2>Users connected</h2>
-                    <ul id="users">
-                    </ul>
+                    <div class="hidden-xs">
+                        <h2>Users connected</h2>
+                        <ul id="users">
+                        </ul>
+                    </div>
 
                     <h2>New message</h2>
                     <form role="form">
                         <div class="form-group">
-                            <label for="new-message" placeholder="New message">New message</label>
                             <input type="text" class="form-control" id="new-message">
                         </div>
                         <button type="submit" class="btn btn-default">Send</button>
@@ -58,22 +62,33 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
             var socket = io();
-
             var username;
             do {
                 username = prompt('Please enter your username');
             } while(username == '');
 
-            $('#users').append($('<li>').text(username));
+            socket.emit('join', username);
 
+            socket.on('status', function(msg) {
+                $('#messages').append($('<li style="background: #eee;">').text(msg));
+            })
+            socket.on('users', function(users) {
+                console.log(users);
+                for (var user in users) {
+                    $('#users').append($('<li>')
+                        .append($('<span style="background: ' + users[user]['color'] + '">')
+                        .text(users[user]['username']))
+                    );
+                }
+            });
+            socket.on('chat-message', function(user, msg) {
+                $('#messages').append($('<li>'));
+                $('#messages > li:last')
+                    .append($('<span style="background: ' + user.color + '">').text(user.username));
+                $('#messages > li:last')
+                    .append(' ' + msg);
+            });
 
-            socket.emit('set-username', username);
-            socket.on('chat-message', function(msg) {
-                $('#messages').append($('<li>').text(msg.message));
-            });
-            socket.on('chat-new-user', function(msg) {
-                $('#messages').append($('<li>').text(msg));
-            });
             $('form').submit(function(){
                 var msg = $('#new-message').val();
                 socket.emit('chat-message', msg);

@@ -30,37 +30,47 @@ function handler (request, response) {
     }
 };
 
+var users = {};
+var colors_used = [];
+
+function random_color() {
+    var rgb = []
+
+    for (i=0; i<3; i++) {
+        do {
+            color = Math.round(Math.random() * 255);
+        } while(color < 150);
+        rgb[i] = color.toString(16);
+    }
+
+    return '#' + rgb.join('');
+}
 
 io.on('connection', function(socket) {
-    socket.broadcast.emit('chat-new-user', 'new user connected');
+
+    socket.on('join', function(username) {
+        var color;
+        do {
+            color = random_color();
+        } while(colors_used.indexOf(color) != -1);
+
+        users[socket.id] = {};
+        users[socket.id]['username'] = username;
+        users[socket.id]['color'] = random_color();
+        console.log(username + ' has joined to the server.');
+        socket.broadcast.emit('status', username + ' has joined to the server.');
+        socket.emit('status', 'You have connected to the server.');
+        io.sockets.emit('users', users);
+    });
 
     socket.on('chat-message', function(msg) {
-        console.log(socket.username + ': ' + msg);
-        io.emit('chat-message', {
-            'user': socket.username,
-            'message': msg
-        });
+        console.log(msg);
+        io.sockets.emit('chat-message', users[socket.id], msg);
     });
-    socket.on('set-username', function(username) {
-        socket.username = username;
-    });
+
+    socket.on('disconnected', function() {
+        io.sockets.emit('status', users[socket.io] + ' has left the server.');
+        delete users[socket.id];
+        io.sockets.emit('users', users);
+    })
 });
-
-
-
-/*
-io.on('connection', function(socket) {
-    console.log('New user connected');
-    socket.on('disconnect', function() {
-        console.log('User disconnected');
-    });
-    socket.on('new message', function(msg) {
-        io.emit('new message', msg);
-        console.log('message: ' + msg);
-    });
-});
-
-http.listen(3000, function() {
-    console.log('listening on *:3000');
-});
-*/
