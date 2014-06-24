@@ -57,19 +57,20 @@ io.on('connection', function(socket) {
         users[socket.id] = {};
         users[socket.id]['username'] = username;
         users[socket.id]['color'] = random_color();
-        console.log(username + ' has joined to the server.');
+        console.log('chat :: ' + username + ' has joined to the server.');
         socket.broadcast.emit('status', username + ' has joined to the server.');
         socket.emit('status', 'You have connected to the server.');
         io.sockets.emit('users', users);
     });
 
     socket.on('chat-message', function(msg) {
-        console.log(msg);
+        console.log('chat :: ' + users[socket.id]['username'] + ' > ' + msg);
         io.sockets.emit('chat-message', users[socket.id], msg);
     });
 
     socket.on('disconnect', function() {
-        io.sockets.emit('status', users[socket.io] + ' has left the server.');
+        console.log('chat :: ' + users[socket.id]['username'] + ' has left the server.')
+        io.sockets.emit('status', users[socket.id]['username'] + ' has left the server.');
         delete users[socket.id];
         io.sockets.emit('users', users);
     })
