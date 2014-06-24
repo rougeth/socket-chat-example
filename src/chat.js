@@ -56,7 +56,7 @@ io.on('connection', function(socket) {
 
         users[socket.id] = {};
         users[socket.id]['username'] = username;
-        users[socket.id]['color'] = random_color();
+        users[socket.id]['color'] = color;
         console.log('chat :: ' + username + ' has joined to the server.');
         socket.broadcast.emit('status', username + ' has joined to the server.');
         socket.emit('status', 'You have connected to the server.');
@@ -70,8 +70,8 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
         console.log('chat :: ' + users[socket.id]['username'] + ' has left the server.')
-        io.sockets.emit('status', users[socket.id]['username'] + ' has left the server.');
+        socket.broadcast.emit('status', users[socket.id]['username'] + ' has left the server.');
         delete users[socket.id];
-        io.sockets.emit('users', users);
-    })
+        socket.broadcast.emit('users', users);
+    });
 });

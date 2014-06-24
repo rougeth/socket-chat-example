@@ -71,9 +71,9 @@
 
             socket.on('status', function(msg) {
                 $('#messages').append($('<li style="background: #eee;">').text(msg));
-            })
+            });
+
             socket.on('users', function(users) {
-                console.log(users);
                 $('#users').text('');
                 for (var user in users) {
                     $('#users').append($('<li>')
@@ -82,6 +82,7 @@
                     );
                 }
             });
+
             socket.on('chat-message', function(user, msg) {
                 $('#messages').append($('<li>'));
                 $('#messages > li:last')
@@ -90,7 +91,7 @@
                     .append(' ' + msg);
             });
 
-            $('form').submit(function(){
+            $('form').submit(function() {
                 var msg = $('#new-message').val();
                 socket.emit('chat-message', msg);
                 $('#new-message').val('');
