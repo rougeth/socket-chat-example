@@ -40,12 +40,6 @@
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <div class="hidden-xs">
-                        <h2>Users connected</h2>
-                        <ul id="users">
-                        </ul>
-                    </div>
-
                     <h2>New message</h2>
                     <form role="form">
                         <div class="form-group">
@@ -53,6 +47,12 @@
                         </div>
                         <button type="submit" class="btn btn-default">Send</button>
                     </form>
+
+                    <div class="hidden-xs">
+                        <h2>Users connected</h2>
+                        <ul id="users">
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
             })
             socket.on('users', function(users) {
                 console.log(users);
-                $('#users').val('');
+                $('#users').text('');
                 for (var user in users) {
                     $('#users').append($('<li>')
                         .append($('<span style="background: ' + users[user]['color'] + '">')
