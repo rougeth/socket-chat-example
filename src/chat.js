@@ -8,7 +8,7 @@ http.listen(3000);
 
 
 function handler (request, response) {
-    console.log(request.headers['host'] + ': ' + request.method + ' ' + request.url);
+    console.log('server :: ' + request.headers['host'] + ': ' + request.method + ' ' + request.url);
 
     var path = url.parse(request.url).pathname;
 
@@ -69,10 +69,9 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
-        var id = socket.id;
-        console.log('chat :: ' + users[id]['username'] + ' has left the server.')
-        io.sockets.emit('status', users[id]['username'] + ' has left the server.');
-        delete users[id];
+        console.log('chat :: ' + users[socket.id]['username'] + ' has left the server.')
+        io.sockets.emit('status', users[socket.id]['username'] + ' has left the server.');
+        delete users[socket.id];
         io.sockets.emit('users', users);
     })
 });
