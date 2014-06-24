@@ -74,6 +74,7 @@
             })
             socket.on('users', function(users) {
                 console.log(users);
+                $('#users').val('');
                 for (var user in users) {
                     $('#users').append($('<li>')
                         .append($('<span style="background: ' + users[user]['color'] + '">')
