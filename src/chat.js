@@ -4,7 +4,7 @@ var fs = require('fs');
 var io = require('socket.io')(http);
 
 
-http.listen(3000);
+http.listen(8080);
 
 
 function handler (request, response) {
