@@ -69,9 +69,10 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {
-        console.log('chat :: ' + users[socket.id]['username'] + ' has left the server.')
-        io.sockets.emit('status', users[socket.id]['username'] + ' has left the server.');
-        delete users[socket.id];
+        var id = socket.id;
+        console.log('chat :: ' + users[id]['username'] + ' has left the server.')
+        io.sockets.emit('status', users[id]['username'] + ' has left the server.');
+        delete users[id];
         io.sockets.emit('users', users);
     })
 });
